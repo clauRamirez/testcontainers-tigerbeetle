@@ -103,4 +103,28 @@ describe("TigerBeetleContainer lifecycle", () => {
     await container.stop();
     await expect(container.stop()).resolves.not.toThrow();
   });
+
+  it(
+    "boots a custom image passed via the constructor",
+    async () => {
+      const container = await new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.16.54").start();
+      let client: Client | undefined;
+      try {
+        client = clientFor(container);
+        const accountId = id();
+        const errors = await client.createAccounts([account(accountId)]);
+        expect(accountErrorNames(errors)).toEqual([]);
+        const lookup = await client.lookupAccounts([accountId]);
+        expect(lookup).toHaveLength(1);
+      } finally {
+        client?.destroy();
+        await container.stop();
+      }
+    },
+    30_000,
+  );
+
+  it("fails fast on a nonexistent image", async () => {
+    await expect(new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.0.0-does-not-exist").start()).rejects.toThrow();
+  });
 });

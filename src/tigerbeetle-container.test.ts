@@ -84,6 +84,48 @@ describe("TigerBeetleContainer", () => {
     expect(creditAccount?.credits_posted).toBe(100n);
   });
 
+  it("serves multiple concurrent clients", async () => {
+    const secondClient = createClient({
+      cluster_id: container.getClusterId(),
+      replica_addresses: [container.getAddress()],
+    });
+    try {
+      const [debitA, creditA, debitB, creditB] = [id(), id(), id(), id()];
+
+      const [accountErrors1, accountErrors2] = await Promise.all([
+        client.createAccounts([account(debitA), account(creditA)]),
+        secondClient.createAccounts([account(debitB), account(creditB)]),
+      ]);
+      expect(accountErrorNames(accountErrors1)).toEqual([]);
+      expect(accountErrorNames(accountErrors2)).toEqual([]);
+
+      const [transferErrors1, transferErrors2] = await Promise.all([
+        client.createTransfers([transfer(debitA, creditA, 10n)]),
+        secondClient.createTransfers([transfer(debitB, creditB, 20n)]),
+      ]);
+      expect(transferErrorNames(transferErrors1)).toEqual([]);
+      expect(transferErrorNames(transferErrors2)).toEqual([]);
+    } finally {
+      secondClient.destroy();
+    }
+  });
+
+  it("exposes container logs", async () => {
+    const stream = await container.logs();
+    const content = await new Promise<string>((resolve) => {
+      let buffer = "";
+      const finish = () => resolve(buffer);
+      const timer = setTimeout(finish, 5_000);
+      stream.on("data", (chunk: Buffer | string) => {
+        buffer += String(chunk);
+        clearTimeout(timer);
+        finish();
+      });
+      stream.on("end", finish);
+    });
+    expect(content).toMatch(/\S/);
+  });
+
   it("exposes working accessors", () => {
     expect(container.getAddress()).toMatch(/^\d+\.\d+\.\d+\.\d+:\d+$/);
     expect(container.getAddress()).not.toContain("localhost");
