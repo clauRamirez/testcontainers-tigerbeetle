@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "TigerBeetle module for Testcontainers (Node.js)",
   "license": "MIT",
-  "author": "clauRamirez <78593605+clauRamirez@users.noreply.github.com>",
+  "author": "clauRamirez <clau.rjimenez@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/clauRamirez/testcontainers-tigerbeetle.git"
@@ -48,6 +48,6 @@
     "tigerbeetle-node": "0.16.53",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.8"
   }
 }
