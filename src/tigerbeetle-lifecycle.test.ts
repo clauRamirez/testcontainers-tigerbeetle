@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
-import { createClient, id, CreateAccountStatus, type CreateAccountResult, type Account, type Client } from "tigerbeetle-node";
-import { StartedTigerBeetleContainer, TigerBeetleContainer } from "./tigerbeetle-container";
+import { describe, expect, it } from 'vitest';
+import {
+  createClient,
+  id,
+  CreateAccountStatus,
+  type CreateAccountResult,
+  type Account,
+  type Client,
+} from 'tigerbeetle-node';
+import { StartedTigerBeetleContainer, TigerBeetleContainer } from './tigerbeetle-container';
 
 const LEDGER = 1;
 const CODE = 1;
@@ -24,9 +31,7 @@ function account(accountId: bigint): Account {
 }
 
 function accountErrorNames(results: CreateAccountResult[]): string[] {
-  return results
-    .filter((r) => r.status !== CreateAccountStatus.created)
-    .map((r) => CreateAccountStatus[r.status]);
+  return results.filter((r) => r.status !== CreateAccountStatus.created).map((r) => CreateAccountStatus[r.status]);
 }
 
 function clientFor(container: StartedTigerBeetleContainer): Client {
@@ -36,8 +41,8 @@ function clientFor(container: StartedTigerBeetleContainer): Client {
   });
 }
 
-describe("TigerBeetleContainer lifecycle", () => {
-  it("runs two isolated instances concurrently", async () => {
+describe('TigerBeetleContainer lifecycle', () => {
+  it('runs two isolated instances concurrently', async () => {
     const [a, b] = await Promise.all([new TigerBeetleContainer().start(), new TigerBeetleContainer().start()]);
     let clientA: Client | undefined;
     let clientB: Client | undefined;
@@ -66,7 +71,7 @@ describe("TigerBeetleContainer lifecycle", () => {
     }
   });
 
-  it("starts fresh after a previous instance stopped", async () => {
+  it('starts fresh after a previous instance stopped', async () => {
     const rememberedId = id();
 
     const first = await new TigerBeetleContainer().start();
@@ -100,33 +105,31 @@ describe("TigerBeetleContainer lifecycle", () => {
     }
   });
 
-  it("stop() is safe to call twice", async () => {
+  it('stop() is safe to call twice', async () => {
     const container = await new TigerBeetleContainer().start();
     await container.stop();
     await expect(container.stop()).resolves.not.toThrow();
   });
 
-  it(
-    "boots an explicit image passed via the constructor",
-    async () => {
-      const container = await new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.17.6").start();
-      let client: Client | undefined;
-      try {
-        client = clientFor(container);
-        const accountId = id();
-        const errors = await client.createAccounts([account(accountId)]);
-        expect(accountErrorNames(errors)).toEqual([]);
-        const lookup = await client.lookupAccounts([accountId]);
-        expect(lookup).toHaveLength(1);
-      } finally {
-        client?.destroy();
-        await container.stop();
-      }
-    },
-    30_000,
-  );
+  it('boots an explicit image passed via the constructor', async () => {
+    const container = await new TigerBeetleContainer('ghcr.io/tigerbeetle/tigerbeetle:0.17.6').start();
+    let client: Client | undefined;
+    try {
+      client = clientFor(container);
+      const accountId = id();
+      const errors = await client.createAccounts([account(accountId)]);
+      expect(accountErrorNames(errors)).toEqual([]);
+      const lookup = await client.lookupAccounts([accountId]);
+      expect(lookup).toHaveLength(1);
+    } finally {
+      client?.destroy();
+      await container.stop();
+    }
+  }, 30_000);
 
-  it("fails fast on a nonexistent image", async () => {
-    await expect(new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.0.0-does-not-exist").start()).rejects.toThrow();
+  it('fails fast on a nonexistent image', async () => {
+    await expect(
+      new TigerBeetleContainer('ghcr.io/tigerbeetle/tigerbeetle:0.0.0-does-not-exist').start(),
+    ).rejects.toThrow();
   });
 });

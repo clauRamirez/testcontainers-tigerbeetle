@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   createClient,
   id,
@@ -9,8 +9,8 @@ import {
   type Account,
   type Client,
   type Transfer,
-} from "tigerbeetle-node";
-import { StartedTigerBeetleContainer, TigerBeetleContainer } from "./tigerbeetle-container";
+} from 'tigerbeetle-node';
+import { StartedTigerBeetleContainer, TigerBeetleContainer } from './tigerbeetle-container';
 
 const LEDGER = 1;
 const CODE = 1;
@@ -51,19 +51,15 @@ function transfer(debitAccountId: bigint, creditAccountId: bigint, amount: bigin
   };
 }
 
-function accountErrorNames(results: CreateAccountResult[]): string[]{
-  return results
-    .filter((r) => r.status !== CreateAccountStatus.created)
-    .map((r) => CreateTransferStatus[r.status]);
+function accountErrorNames(results: CreateAccountResult[]): string[] {
+  return results.filter((r) => r.status !== CreateAccountStatus.created).map((r) => CreateTransferStatus[r.status]);
 }
 
 function transferErrorNames(results: CreateTransferResult[]): string[] {
-  return results
-    .filter((r) => r.status !== CreateTransferStatus.created)
-    .map((r) => CreateTransferStatus[r.status]);
+  return results.filter((r) => r.status !== CreateTransferStatus.created).map((r) => CreateTransferStatus[r.status]);
 }
 
-describe("TigerBeetleContainer", () => {
+describe('TigerBeetleContainer', () => {
   let container: StartedTigerBeetleContainer;
   let client: Client;
 
@@ -80,7 +76,7 @@ describe("TigerBeetleContainer", () => {
     await container?.stop();
   });
 
-  it("creates two accounts and transfers between them", async () => {
+  it('creates two accounts and transfers between them', async () => {
     const debitAccountId = id();
     const creditAccountId = id();
 
@@ -98,7 +94,7 @@ describe("TigerBeetleContainer", () => {
     expect(creditAccount?.credits_posted).toBe(100n);
   });
 
-  it("serves multiple concurrent clients", async () => {
+  it('serves multiple concurrent clients', async () => {
     const secondClient = createClient({
       cluster_id: container.getClusterId(),
       replica_addresses: [container.getAddress()],
@@ -124,25 +120,25 @@ describe("TigerBeetleContainer", () => {
     }
   });
 
-  it("exposes container logs", async () => {
+  it('exposes container logs', async () => {
     const stream = await container.logs();
     const content = await new Promise<string>((resolve) => {
-      let buffer = "";
+      let buffer = '';
       const finish = () => resolve(buffer);
       const timer = setTimeout(finish, 5_000);
-      stream.on("data", (chunk: Buffer | string) => {
+      stream.on('data', (chunk: Buffer | string) => {
         buffer += String(chunk);
         clearTimeout(timer);
         finish();
       });
-      stream.on("end", finish);
+      stream.on('end', finish);
     });
     expect(content).toMatch(/\S/);
   });
 
-  it("exposes working accessors", () => {
+  it('exposes working accessors', () => {
     expect(container.getAddress()).toMatch(/^\d+\.\d+\.\d+\.\d+:\d+$/);
-    expect(container.getAddress()).not.toContain("localhost");
+    expect(container.getAddress()).not.toContain('localhost');
     expect(container.getPort()).toBeGreaterThan(0);
     expect(container.getClusterId()).toBe(0n);
   });
