@@ -3,7 +3,7 @@ import { AbstractStartedContainer, GenericContainer, Wait } from "testcontainers
 const TIGERBEETLE_PORT = 3000;
 const CLUSTER_ID = 0n;
 const DATA_FILE = "/data/0_0.tigerbeetle";
-const DEFAULT_IMAGE = "ghcr.io/tigerbeetle/tigerbeetle:0.16.53";
+const DEFAULT_IMAGE = "ghcr.io/tigerbeetle/tigerbeetle:0.17.6";
 
 export class TigerBeetleContainer extends GenericContainer {
   constructor(image: string = DEFAULT_IMAGE) {

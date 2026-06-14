@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createClient, id, CreateAccountError, type Account, type Client } from "tigerbeetle-node";
+import { createClient, id, CreateAccountStatus, type CreateAccountResult, type Account, type Client } from "tigerbeetle-node";
 import { StartedTigerBeetleContainer, TigerBeetleContainer } from "./tigerbeetle-container";
 
 const LEDGER = 1;
@@ -23,8 +23,10 @@ function account(accountId: bigint): Account {
   };
 }
 
-function accountErrorNames(errors: { index: number; result: number }[]): string[] {
-  return errors.map((e) => `[${e.index}] ${CreateAccountError[e.result]}`);
+function accountErrorNames(results: CreateAccountResult[]): string[] {
+  return results
+    .filter((r) => r.status !== CreateAccountStatus.created)
+    .map((r) => CreateAccountStatus[r.status]);
 }
 
 function clientFor(container: StartedTigerBeetleContainer): Client {
@@ -105,9 +107,9 @@ describe("TigerBeetleContainer lifecycle", () => {
   });
 
   it(
-    "boots a custom image passed via the constructor",
+    "boots an explicit image passed via the constructor",
     async () => {
-      const container = await new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.16.54").start();
+      const container = await new TigerBeetleContainer("ghcr.io/tigerbeetle/tigerbeetle:0.17.6").start();
       let client: Client | undefined;
       try {
         client = clientFor(container);

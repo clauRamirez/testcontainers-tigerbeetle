@@ -1,5 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createClient, id, CreateAccountError, CreateTransferError, type Account, type Client, type Transfer } from "tigerbeetle-node";
+import {
+  createClient,
+  id,
+  CreateAccountStatus,
+  CreateTransferStatus,
+  type CreateAccountResult,
+  type CreateTransferResult,
+  type Account,
+  type Client,
+  type Transfer,
+} from "tigerbeetle-node";
 import { StartedTigerBeetleContainer, TigerBeetleContainer } from "./tigerbeetle-container";
 
 const LEDGER = 1;
@@ -41,12 +51,16 @@ function transfer(debitAccountId: bigint, creditAccountId: bigint, amount: bigin
   };
 }
 
-function accountErrorNames(errors: { index: number; result: number }[]): string[] {
-  return errors.map((e) => `[${e.index}] ${CreateAccountError[e.result]}`);
+function accountErrorNames(results: CreateAccountResult[]): string[]{
+  return results
+    .filter((r) => r.status !== CreateAccountStatus.created)
+    .map((r) => CreateTransferStatus[r.status]);
 }
 
-function transferErrorNames(errors: { index: number; result: number }[]): string[] {
-  return errors.map((e) => `[${e.index}] ${CreateTransferError[e.result]}`);
+function transferErrorNames(results: CreateTransferResult[]): string[] {
+  return results
+    .filter((r) => r.status !== CreateTransferStatus.created)
+    .map((r) => CreateTransferStatus[r.status]);
 }
 
 describe("TigerBeetleContainer", () => {
