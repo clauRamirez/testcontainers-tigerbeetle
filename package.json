@@ -1,6 +1,6 @@
 {
   "name": "testcontainers-tigerbeetle",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "TigerBeetle module for Testcontainers (Node.js)",
   "license": "MIT",
   "author": "clauRamirez <clau.rjimenez@gmail.com>",
@@ -31,7 +31,7 @@
     "build"
   ],
   "engines": {
-    "node": ">=24"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
