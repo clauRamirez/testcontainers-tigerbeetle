@@ -1,6 +1,6 @@
 {
   "name": "testcontainers-tigerbeetle",
-  "version": "0.0.1-alpha1",
+  "version": "0.0.1-debug1",
   "description": "TigerBeetle module for Testcontainers (Node.js)",
   "license": "MIT",
   "author": "clauRamirez <clau.rjimenez@gmail.com>",
