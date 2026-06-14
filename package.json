@@ -38,11 +38,11 @@
     "prepare": "simple-git-hooks",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --fix",
-    "format": "prettier --write ."
+    "lint": "eslint .",
+    "format": "prettier --write . && eslint . --fix"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run format && npm run lint && npm run typecheck"
+    "pre-commit": "npm run format && npm run typecheck"
   },
   "dependencies": {
     "testcontainers": "^12.0.2"
