@@ -17,13 +17,13 @@ Creates a container using the specified image. Defaults to the latest stable Tig
 
 ### `StartedTigerBeetleContainer`
 
-| Method | Returns | Description |
-| --- | --- | --- |
-| `getAddress()` | `string` | `host:port` address for the TigerBeetle client |
-| `getPort()` | `number` | Mapped host port |
-| `getClusterId()` | `bigint` | Cluster ID (always `0n`) |
-| `logs()` | `Promise<ReadableStream>` | Container log stream |
-| `stop()` | `Promise<void>` | Stops and removes the container |
+| Method           | Returns                   | Description                                    |
+| ---------------- | ------------------------- | ---------------------------------------------- |
+| `getAddress()`   | `string`                  | `host:port` address for the TigerBeetle client |
+| `getPort()`      | `number`                  | Mapped host port                               |
+| `getClusterId()` | `bigint`                  | Cluster ID (always `0n`)                       |
+| `logs()`         | `Promise<ReadableStream>` | Container log stream                           |
+| `stop()`         | `Promise<void>`           | Stops and removes the container                |
 
 ## Example
 
